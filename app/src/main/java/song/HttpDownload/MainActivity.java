@@ -17,10 +17,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static String mUrl;
     public static SharedPreferences sp;
     private SharedPreferences.Editor mEdit;
-    //Boolean B用于描述状态:
-    //   是否在刷流量
-    //   true:是   false:不是
-    public static boolean b = false;
     public static Handler mHandler;
 
     @Override
@@ -36,12 +32,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void handleMessage(Message msg) {
                 if(msg.what==100){
+                    mAction.setText("继续");
                     String str = (String) msg.obj;
                     Toast.makeText(getApplicationContext(),str,Toast.LENGTH_SHORT).show();
                 }
             }
         };
-
     }
 
     private void initId() {
@@ -56,12 +52,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.action_Btn :
-                b = !b;
                 action();
                 break;
             case R.id.dropOut_Btn :
-                //似乎可以不写这一行,待测试
-                b = !b;
+                Switch.getInstance().setStatu(false);
                 finish();;break;
             default: break;
         }
@@ -71,7 +65,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //检测并保存
         if (saveUrl()) return;
         //取反,用于开关操作
-        if(b){
+        Switch.getInstance().setStatu(!Switch.getInstance().getStatu());
+
+        if(Switch.getInstance().getStatu()){
             //开刷
             mAction.setText("暂停");
             Thread_manager();
@@ -88,11 +84,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 super.run();
                 Download d = Download.getInstance();
                 //for循环用于一直监听变量b
-                for(;b;){
-                    if(SharedData.num<5){
+                for(;Switch.getInstance().getStatu();){
+                    if(ThreadNum.getInstance().getNum()<5){
                         //循环new线程
-                        new Thread(d,String.valueOf(SharedData.num)).start();
-                        SharedData.num++;
+                        new Thread(d,String.valueOf(ThreadNum.getInstance().getNum())).start();
+                        synchronized (ThreadNum.getInstance()){
+                            ThreadNum.getInstance().numAdd();
+                        }
                     }
                 }
             }

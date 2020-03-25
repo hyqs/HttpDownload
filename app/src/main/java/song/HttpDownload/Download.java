@@ -4,8 +4,6 @@ import android.util.Log;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import static song.HttpDownload.MainActivity.b;
 import static song.HttpDownload.MainActivity.mAction;
 import static song.HttpDownload.MainActivity.mHandler;
 import static song.HttpDownload.MainActivity.mUrl;
@@ -30,30 +28,33 @@ public class Download implements Runnable{
             coon.getContentLength();
             //创建字节流
             byte[] bs = new byte[1024];
-            int len;
+//            int len = 0;
             //遍历数据
-            while ((len = is.read(bs)) != -1){
+            while ((is.read(bs)) != -1){
                 //一旦下令停止,终止线程
-                if(!b){
+                if(!Switch.getInstance().getStatu()){
                     //当关闭按钮时,结束线程
                     Thread.currentThread().interrupt();
                 }
             }
             is.close();
         } catch (Exception e) {
+            Switch.getInstance().setStatu(false);
             e.printStackTrace();
+            Message msg = new Message();
+            msg.what=100;
             if(e instanceof java.net.ConnectException){
-                Message msg = new Message();
-                msg.what=100;
                 msg.obj = "网络异常:java.net.ConnectException";
-                mHandler.sendMessage(msg);
-                b = !b;
-                mAction.setText("开始");
+            }else if(e instanceof java.io.InterruptedIOException){
+                msg.obj = "强行停止线程!";
+            }else{
+                msg.obj = e.toString();
             }
+            mHandler.sendMessage(msg);
         }finally {
             //正常/异常都要执行的代码
             //线程结束,num--
-            SharedData.num--;
+            ThreadNum.getInstance().numLess();
             Log.d("线程"+Thread.currentThread().getName(),"下载完成!");
         }
     }
