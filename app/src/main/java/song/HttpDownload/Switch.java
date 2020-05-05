@@ -1,21 +1,24 @@
 package song.HttpDownload;
-//用于获取开关实例.
-public class Switch {
+
+/**
+ *      开关状态:
+ * */
+class Switch {
     //开关状态
-    private boolean statu = false;
+    private static boolean statu = false;
     //获取状态
-    synchronized public boolean getStatu() {
+    static boolean getStatu() {
         return statu;
     }
     //设置状态
-    synchronized public void setStatu(boolean statu) {
-        this.statu = statu;
+    static void setStatu(boolean statu) {
+        INSTANCE.statu = statu;
     }
 
     //单例设计模式
     private static Switch INSTANCE = new Switch();
     private Switch(){};
-    public static Switch getInstance(){
+    static Switch getInstance(){
         return INSTANCE;
     };
 }

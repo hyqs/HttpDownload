@@ -4,7 +4,6 @@ import android.util.Log;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import static song.HttpDownload.MainActivity.mAction;
 import static song.HttpDownload.MainActivity.mHandler;
 import static song.HttpDownload.MainActivity.mUrl;
 
@@ -14,48 +13,52 @@ public class Download implements Runnable{
     private static final Download INSTANCE = new Download();
     @Override
     public void run() {
-        try {
+        try
+        {
             Log.d("线程"+Thread.currentThread().getName(),"开始!");
-
             URL url = new URL(mUrl);
             //打开链接
             HttpURLConnection coon = (HttpURLConnection) url.openConnection();
             //设置超时
-            coon.setConnectTimeout(3000);
-            //打开输入流
-            InputStream is = coon.getInputStream();
+            coon.setConnectTimeout(1000);
+            //获取输入流
+            InputStream in = coon.getInputStream();
             //获得长度
             coon.getContentLength();
             //创建字节流
             byte[] bs = new byte[1024];
-//            int len = 0;
             //遍历数据
-            while ((is.read(bs)) != -1){
-                //一旦下令停止,终止线程
+            while ((in.read(bs)) != -1){
+                //一旦Switch对象为false,终止线程
                 if(!Switch.getInstance().getStatu()){
-                    //当关闭按钮时,结束线程
+                    //当关闭按钮时,中断当前线程。
+                    in.close();//释放服务器资源
                     Thread.currentThread().interrupt();
                 }
             }
-            is.close();
+            in.close();
         } catch (Exception e) {
+            //设置开关状态
             Switch.getInstance().setStatu(false);
-            e.printStackTrace();
             Message msg = new Message();
             msg.what=100;
             if(e instanceof java.net.ConnectException){
-                msg.obj = "网络异常:java.net.ConnectException";
-            }else if(e instanceof java.io.InterruptedIOException){
-                msg.obj = "强行停止线程!";
+                msg.obj = "网络连接异常:java.net.ConnectException";
+            }else if(e instanceof java.net.SocketTimeoutException){
+                msg.obj = "网络连接超时(1s):java.net.SocketTimeoutException";
+            }else if(e instanceof java.io.IOException){
+                msg.obj = "已停止测试!";
             }else{
                 msg.obj = e.toString();
             }
+            e.printStackTrace();//打印给开发者看
             mHandler.sendMessage(msg);
         }finally {
             //正常/异常都要执行的代码
             //线程结束,num--
+            MainActivity.mNetSpeedTimer.stopSpeedTimer();//关闭网速
             ThreadNum.getInstance().numLess();
-            Log.d("线程"+Thread.currentThread().getName(),"下载完成!");
+            Log.d("线程"+Thread.currentThread().getName(),"结束!");
         }
     }
     //私有化构造器
