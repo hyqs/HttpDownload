@@ -6,7 +6,7 @@ import java.text.DecimalFormat;
 
 /*
     *       网速类
-    * 作用:每调用一次getNetSpeed()方法,返回一次网速
+    * 作用:每调用一次getNetSpeed()方法,返回前一秒与当前秒的流量差
     * 设计:应该使用定时器每隔一秒调用一次      转到该类 --> NetSpeedTimer
     * */
 public class NetSpeed {
@@ -23,9 +23,9 @@ public class NetSpeed {
         lastTimeStamp = nowTimeStamp;
         lastTotalRxBytes = nowTotalRxBytes;
         if(speed>1024){
-            return String.valueOf(df.format(speed/1024.00)) + " MB/s";
+            return df.format(speed / 1024.00) + " MB/s";
         }
-        return String.valueOf(speed) + " KB/s";
+        return speed + " KB/s";
     }
 
 

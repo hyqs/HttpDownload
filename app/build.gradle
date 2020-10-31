@@ -34,4 +34,11 @@ dependencies {
 
     //导入seekbar 包
     implementation 'com.xw.repo:bubbleseekbar:3.20-lite'
+    //fastJson
+    implementation('com.alibaba:fastjson:1.2.71')
+    //SwipeDelMenuLayout(侧滑菜单)
+    implementation 'com.github.mcxtzhang:SwipeDelMenuLayout:V1.3.0'
+    //OKHttp
+    implementation 'com.squareup.okhttp3:okhttp:3.4.1'
+
 }

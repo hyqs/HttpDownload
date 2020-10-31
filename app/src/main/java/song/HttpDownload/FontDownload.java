@@ -1,14 +1,10 @@
 package song.HttpDownload;
 
-import android.content.Context;
-import android.content.ContextWrapper;
 import android.os.Build;
-import android.os.Environment;
 import android.os.Message;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
-import androidx.core.content.ContextCompat;
 
 import java.io.File;
 import java.io.FileOutputStream;

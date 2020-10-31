@@ -19,12 +19,12 @@ public class Download implements Runnable{
             URL url = new URL(mUrl);
             //打开链接
             HttpURLConnection coon = (HttpURLConnection) url.openConnection();
-            //设置超时
-            coon.setConnectTimeout(1000);
+            //设置超时:2s
+            coon.setConnectTimeout(2000);
             //获取输入流
             InputStream in = coon.getInputStream();
             //获得长度
-            coon.getContentLength();
+            Log.d("长度", String.valueOf(coon.getContentLength()));
             //创建字节流
             byte[] bs = new byte[1024];
             //遍历数据
@@ -42,16 +42,18 @@ public class Download implements Runnable{
             Switch.getInstance().setStatu(false);
             Message msg = new Message();
             msg.what=100;
-            if(e instanceof java.net.ConnectException){
+            if(e instanceof java.net.UnknownHostException){
+                msg.obj = "未知主机异常:java.net.UnknownHostException";
+            }else if(e instanceof java.net.ConnectException){
                 msg.obj = "网络连接异常:java.net.ConnectException";
             }else if(e instanceof java.net.SocketTimeoutException){
-                msg.obj = "网络连接超时(1s):java.net.SocketTimeoutException";
+                msg.obj = "网络连接超时(2s):java.net.SocketTimeoutException";
             }else if(e instanceof java.io.IOException){
                 msg.obj = "已停止测试!";
             }else{
                 msg.obj = e.toString();
             }
-            e.printStackTrace();//打印给开发者看
+//            e.printStackTrace();
             mHandler.sendMessage(msg);
         }finally {
             //正常/异常都要执行的代码

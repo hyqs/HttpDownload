@@ -11,8 +11,21 @@
         android:id="@+id/inputUrl_ET"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxLines="2"
         android:hint="输入下载地址"/>
-    网络/网速
+    <!--当前服务器资源地址-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="当前地址(点击更改)："/>
+    <TextView
+        android:id="@+id/Url_TV"
+        android:background="@drawable/textview_border"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="没有URL"
+        />
+    <!--网络/网速-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="30dp"
@@ -45,6 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"/>
         <com.xw.repo.BubbleSeekBar
+            app:bsb_max="64"
             app:bsb_min="1"
             app:bsb_progress="8"
             android:id="@+id/seek_bar_ThreadNum"
@@ -52,7 +66,7 @@
             android:layout_height="16dp"
             android:layout_marginTop="8dp"/>
     </LinearLayout>
-<!--    开关与退出-->
+    <!--开关与退出-->
     <Button
         android:background="#FF8080"
         android:id="@+id/action_Btn"
@@ -60,12 +74,7 @@
         android:layout_height="wrap_content"
         android:text="开始测试~"/>
 
-    <Button
-        android:id="@+id/dropOut_Btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="退出"/>
-<!--    Log输出-->
+    <!--Log输出-->
     <TextView
         android:textColor="#FF8080"
         android:textSize="20dp"
